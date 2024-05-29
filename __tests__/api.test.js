@@ -35,7 +35,7 @@ test("404: will respond with a 404 when the server cannot find the requested res
     .get("/api/topic")
     .expect(404)
     .then(({ body }) => {
-      expect(body.msg).toBe("Route not found");
+      expect(body.msg).toBe("Route Not Found");
     });
 });
 
@@ -54,8 +54,43 @@ describe("GET /api", () => {
       .get("/ap")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Route not found");
+        expect(body.msg).toBe("Route Not Found");
       });
   });
 });
-
+describe("GET /api/articles/:article_id", () => {
+  test("200: GET articles by the article id and responds with an article object, which should have the following properties: author, title, article_id, body, topic, created_at, votes, article_img_url", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          votes: expect.any(Number),
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  test("404: will respond with a 404 when the server cannot find the requested resource", () => {
+    return request(app)
+      .get("/api/articles/999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route Not Found");
+      });
+  });
+    test("400: will respond with a 400 when the server cannot find the requested resource", () => {
+      return request(app)
+        .get("/api/articles/notAnId")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+});
