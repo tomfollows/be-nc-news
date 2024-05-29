@@ -55,6 +55,7 @@ describe("GET /api", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Route Not Found");
+
       });
   });
 });

@@ -10,6 +10,10 @@ app.get("/api", getApi);
 
 app.get("/api/articles/:article_id", getArticleById);
 
+app.all("*", (req, res) => {
+  res.status(404).send({ msg: "Route Not Found" });
+});
+
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
     res.status(400).send({ msg: "Bad Request" });
@@ -24,11 +28,7 @@ app.use((err, req, res, next) => {
   } else {
     next(err);
   }
-});
 
-
-app.all("*", (req, res) => {
-  res.status(404).send({ msg: "Route Not Found" });
 });
 
 app.use((err, req, res, next) => {
