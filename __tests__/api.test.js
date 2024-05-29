@@ -55,7 +55,6 @@ describe("GET /api", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Route Not Found");
-
       });
   });
 });
@@ -93,6 +92,36 @@ describe("GET /api/articles/:article_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+describe("GET /api/articles", () => {
+  test("200: GET /api/articles should respond with an articles array of article objects, each of which should have the relevant properties", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            topic: expect.any(String),
+            article_id: expect.any(Number),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("404: will respond with a 404 when the server cannot find the requested resource", () => {
+    return request(app)
+      .get("/api/artickles")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route Not Found");
       });
   });
 });
