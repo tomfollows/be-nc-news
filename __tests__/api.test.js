@@ -55,6 +55,7 @@ describe("GET /api", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Route Not Found");
+
       });
   });
 });
@@ -66,14 +67,15 @@ describe("GET /api/articles/:article_id", () => {
       .then(({ body }) => {
         const { article } = body;
         expect(article).toMatchObject({
-          author: expect.any(String),
-          votes: expect.any(Number),
-          article_id: expect.any(Number),
-          title: expect.any(String),
-          topic: expect.any(String),
-          created_at: expect.any(String),
-          votes: expect.any(Number),
-          article_img_url: expect.any(String),
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 100,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
       });
   });
@@ -85,12 +87,12 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.msg).toBe("Route Not Found");
       });
   });
-    test("400: will respond with a 400 when the server cannot find the requested resource", () => {
-      return request(app)
-        .get("/api/articles/notAnId")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Bad Request");
-        });
-    });
+  test("400: will respond with a 400 when the server cannot find the requested resource", () => {
+    return request(app)
+      .get("/api/articles/notAnId")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
 });
