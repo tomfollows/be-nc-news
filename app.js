@@ -6,15 +6,19 @@ const { getApi } = require("./controllers/api.controllers");
 const {
   getArticleById,
   getAllArticles,
+  //getAllArticleComments,
+  getCommentsByArticleId,
 } = require("./controllers/articles.controllers");
 
 app.get("/api/topics", getTopics);
 
 app.get("/api", getApi);
 
+app.get("/api/articles", getAllArticles);
+
 app.get("/api/articles/:article_id", getArticleById);
 
-app.get("/api/articles", getAllArticles);
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Route Not Found" });
