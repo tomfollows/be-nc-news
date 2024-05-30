@@ -214,6 +214,35 @@ describe("POST /api/articles/:article_id/comments", () => {
         });
       });
   });
+  test("201: POST should ignore any additional properties in the request body", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        author: "butter_bridge",
+        body: "This is a test comment",
+        votes: 100,
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          author: "butter_bridge",
+          body: "This is a test comment",
+        });
+      });
+  });
+
+  test("400: ERROR - responds with the error if the post body does not contain required key-value properties", () => {
+    const comment = { body: "test comment", article_id: 1 };
+    return request(app)
+      .post("/api/articles/NotanId/comments")
+      .send(comment)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+
   test("400: ERROR - responds with the error if the data type for id is incorrect", () => {
     const comment = {
       username: "butter_bridge",
@@ -228,9 +257,9 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(res.body.msg).toBe("Bad Request");
       });
   });
-  test("404: ERROR - responds with The article id does not exist if article_id not present", () => {
+  test("404: ERROR - responds with The article id does not exist if article_id is not present", () => {
     const comment = {
-      username: "butter_bridge",
+      username: "X",
       body: "test comment",
       article_id: 1,
     };
@@ -284,19 +313,6 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
-// CORE: DELETE /api/comments/:comment_id
-// Description
-// Should:
-
-// be available on /api/comments/:comment_id.
-// delete the given comment by comment_id.
-// Responds with:
-
-// status 204 and no content.
-// Consider what errors could occur with this endpoint, and make sure to test for them.
-
-// Remember to add a description of this endpoint to your /api endpoint.
-
 describe("DELETE /api/comments/:comment_id", () => {
   test("204: DELETE /api/comments/:comment_id should respond with status 204 and no content", () => {
     return request(app)
