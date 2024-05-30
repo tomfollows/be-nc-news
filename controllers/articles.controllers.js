@@ -1,10 +1,9 @@
 const {
   SelectByArticleId,
   selectAllArticles,
-  //selectArticleComments,
   checkArticleExists,
-  //getCommentsByArticleId,
   fetchCommentsByArticleId,
+  postCommentModel,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -12,6 +11,7 @@ exports.getArticleById = (req, res, next) => {
   SelectByArticleId(article_id)
     .then((article) => {
       res.status(200).send({ article });
+      console.log(article, "<------ article")
     })
     .catch(next);
 };
@@ -26,19 +26,30 @@ exports.getAllArticles = (req, res, next) => {
     });
 };
 
+
+
 exports.getCommentsByArticleId = (req, res, next) => {
   const articleId = req.params.article_id;
   const promises = [
     checkArticleExists(articleId),
     fetchCommentsByArticleId(articleId),
-    
   ];
   Promise.all(promises)
     .then((resolvedPromises) => {
       const comments = resolvedPromises[1];
       res.status(200).send({ comments });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
+
+exports.postCommentByArticleId = (req, res, next) => {
+    const { article_id } = req.params;
+    console.log(article_id)
+    const { author, body } = req.body;
+  
+    postCommentModel(article_id, author, body)
+      .then((comment) => {
+        res.status(201).send({ comment });
+      })
+      .catch(next);
+  };
