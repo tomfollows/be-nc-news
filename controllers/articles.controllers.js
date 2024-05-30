@@ -44,7 +44,6 @@ exports.getCommentsByArticleId = (req, res, next) => {
 exports.postCommentByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { author, body } = req.body;
-
   postCommentModel(article_id, author, body)
     .then((comment) => {
       res.status(201).send({ comment });
@@ -68,5 +67,3 @@ exports.getCommentsByCommentId = (req, res, next) => {
     res.status(204).send({ comment });
   });
 };
-
-const { deleteCommentByIdFromDB } = require("../models/delete.model");
