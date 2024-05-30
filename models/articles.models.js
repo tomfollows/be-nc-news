@@ -54,15 +54,6 @@ exports.selectArticleComments = (article_id) => {
     });
 };
 
-exports.checkIfArticleExists = (article_id) => {
-  return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
-    .then(({ rows }) => {
-      if (!rows.length)
-        return Promise.reject({ status: 404, msg: "Route Not Found" });
-    });
-};
-
 exports.checkArticleExists = (articleId) => {
   return db
     .query(
@@ -84,14 +75,29 @@ exports.fetchCommentsByArticleId = (articleId) => {
   return db
     .query(
       `
-      SELECT * FROM comments
-      WHERE article_id = $1
-      ORDER BY created_at DESC
-      `,
+        SELECT * FROM comments
+        WHERE article_id = $1
+        ORDER BY created_at DESC
+        `,
       [articleId]
     )
     .then((res) => {
-        return res.rows; 
-      })
-  
+      return res.rows;
+    });
+};
+
+exports.postCommentModel = (article_id, author, body) => {
+  return db
+    .query(
+      `INSERT INTO comments (article_id, author, body)
+        VALUES ($1, $2, $3)
+        RETURNING *`,
+      [article_id, author, body]
+    )
+    .then((res) => {
+      return res.rows[0];
+    })
+    .catch((err) => {
+      throw err;
+    });
 };

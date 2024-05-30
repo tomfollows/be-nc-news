@@ -102,7 +102,6 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        console.log(body, "<------ body test");
         expect(body.articles.length).toBe(13);
         body.articles.forEach((article) => {
           expect(article).toMatchObject({
@@ -194,6 +193,53 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("Article id invalid");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: POST /api/articles/:article_id/comments should respond with the posted comment", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        author: "butter_bridge",
+        body: "This is a test comment",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          author: "butter_bridge",
+          body: "This is a test comment",
+        });
+      });
+  });
+  test("400: ERROR - responds with the error if the data type for id is incorrect", () => {
+    const comment = {
+      username: "butter_bridge",
+      body: "test comment",
+      article_id: 1,
+    };
+    return request(app)
+      .post("/api/articles/notAnID/comments")
+      .send(comment)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+  test("404: ERROR - responds with The article id does not exist if article_id not present", () => {
+    const comment = {
+      username: "butter_bridge",
+      body: "test comment",
+      article_id: 1,
+    };
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(comment)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Not Found");
       });
   });
 });
