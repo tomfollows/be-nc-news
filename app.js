@@ -3,6 +3,7 @@ const app = express();
 app.use(express.json());
 const { getTopics } = require("./controllers/topics.controllers");
 const { getApi } = require("./controllers/api.controllers");
+const { deleteCommentById } = require("./controllers/delete.controllers");
 
 const {
   getArticleById,
@@ -10,7 +11,6 @@ const {
   getCommentsByArticleId,
   postCommentByArticleId,
   updateArticleVotes,
-  
 } = require("./controllers/articles.controllers");
 
 app.get("/api/topics", getTopics);
@@ -27,6 +27,7 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.patch("/api/articles/:article_id", updateArticleVotes);
 
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Route Not Found" });

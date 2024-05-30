@@ -284,3 +284,42 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+// CORE: DELETE /api/comments/:comment_id
+// Description
+// Should:
+
+// be available on /api/comments/:comment_id.
+// delete the given comment by comment_id.
+// Responds with:
+
+// status 204 and no content.
+// Consider what errors could occur with this endpoint, and make sure to test for them.
+
+// Remember to add a description of this endpoint to your /api endpoint.
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: DELETE /api/comments/:comment_id should respond with status 204 and no content", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then((res) => {
+        expect(res.body).toEqual({});
+      });
+  });
+  test("404: ERROR - responds with The comment id does not exist if comment_id not present", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Not Found");
+      });
+  });
+  test("400: ERROR - responds with the error if the data type for id is incorrect", () => {
+    return request(app)
+      .delete("/api/comments/notAnID")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+});
