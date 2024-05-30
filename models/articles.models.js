@@ -101,3 +101,20 @@ exports.postCommentModel = (article_id, author, body) => {
       throw err;
     });
 };
+
+exports.VotesModel = (article_id, inc_votes) => {
+  return db
+    .query(
+      `UPDATE articles
+            SET votes = votes + $2
+            WHERE article_id = $1
+            RETURNING *`,
+      [article_id, inc_votes]
+    )
+    .then((res) => {
+      if (res.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      }
+      return res.rows[0];
+    });
+};

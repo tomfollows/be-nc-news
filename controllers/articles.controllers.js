@@ -4,6 +4,7 @@ const {
   checkArticleExists,
   fetchCommentsByArticleId,
   postCommentModel,
+  VotesModel,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -11,7 +12,6 @@ exports.getArticleById = (req, res, next) => {
   SelectByArticleId(article_id)
     .then((article) => {
       res.status(200).send({ article });
-      console.log(article, "<------ article")
     })
     .catch(next);
 };
@@ -25,8 +25,6 @@ exports.getAllArticles = (req, res, next) => {
       next(err);
     });
 };
-
-
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const articleId = req.params.article_id;
@@ -43,13 +41,22 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 
 exports.postCommentByArticleId = (req, res, next) => {
-    const { article_id } = req.params;
-    console.log(article_id)
-    const { author, body } = req.body;
-  
-    postCommentModel(article_id, author, body)
-      .then((comment) => {
-        res.status(201).send({ comment });
-      })
-      .catch(next);
-  };
+  const { article_id } = req.params;
+  const { author, body } = req.body;
+
+  postCommentModel(article_id, author, body)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.updateArticleVotes = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  VotesModel(article_id, inc_votes)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch(next);
+};
