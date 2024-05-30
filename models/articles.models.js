@@ -118,3 +118,4 @@ exports.VotesModel = (article_id, inc_votes) => {
       return res.rows[0];
     });
 };
+
