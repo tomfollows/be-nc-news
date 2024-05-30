@@ -243,3 +243,44 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: PATCH /api/articles/:article_id should respond with the updated article with the addition of 1 vote", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.votes).toBe(101);
+      });
+  });
+  test("200: PATCH /api/articles/:article_id should respond with the updated article with subtraction of 1 vote", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: -1 })
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.votes).toBe(99);
+      });
+  });
+  test("400: ERROR - responds with the error if the data type for id is incorrect", () => {
+    return request(app)
+      .patch("/api/articles/notAnID")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+  test("404: ERROR - responds with The article id does not exist if article_id not present", () => {
+    return request(app)
+      .patch("/api/articles/9999")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Not Found");
+      });
+  });
+});
