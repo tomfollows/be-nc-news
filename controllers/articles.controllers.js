@@ -18,8 +18,11 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
+  const sortBy = req.query.sort_by;
+  const order = req.query.order;
+
   const topic = req.query.topic;
-  selectAllArticles(topic)
+  selectAllArticles(topic, sortBy, order)
     .then((articles) => {
       if (articles.length === 0) {
         return Promise.reject({ status: 404, msg: "Topic Not Found" });
