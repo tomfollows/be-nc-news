@@ -17,7 +17,6 @@ exports.SelectByArticleId = (id) => {
       [id]
     )
     .then((result) => {
-      console.log(result.rows);
       if (result.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Route Not Found" });
       } else {
