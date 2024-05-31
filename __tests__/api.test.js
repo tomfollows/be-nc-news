@@ -138,6 +138,55 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("200: articles should be sorted by created_at in descending order by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("200: articles should be sorted by created_at in ascending order when order is set to asc", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: false,
+        });
+      });
+  });
+  test("200: default created_at should be sorted by created_at in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("200: articles should be sorted by votes in descending order when sort_by is set to votes", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("votes", {
+          descending: true,
+        });
+      });
+  });
+  test("400: if the sort_by query is invalid, the server should respond with a 400 error", () => {
+    return request(app)
+      .get("/api/articles?sort_by=notAnOption")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid sort by query");
+      });
+  });
+
   test("404: will respond with a 404 when the server cannot find the requested resource", () => {
     return request(app)
       .get("/api/artickles")
@@ -147,7 +196,6 @@ describe("GET /api/articles", () => {
       });
   });
 });
-//
 
 describe("GET /api/articles/:article_id/comments", () => {
   test("200: GET /api/articles/:article_id/comments should respond with an array of comments for the given article_id, each of which should have the relevant properties", () => {
@@ -385,16 +433,6 @@ describe("GET /api/users", () => {
       });
   });
 });
-// CORE: GET /api/articles (topic query)
-// Description
-// FEATURE REQUEST The endpoint should also accept the following query:
-
-// topic, which filters the articles by the topic value specified in the query. If the query is omitted, the endpoint should respond with all articles.
-// Consider what errors could occur with this endpoint, and make sure to test for them.
-
-// You should not have to amend any previous tests.
-
-// Remember to add a description of this endpoint to your /api endpoint
 
 describe("GET /api/articles?topic=topic", () => {
   test("200: GET /api/articles?topic=topic should respond with an articles array of article objects filtered by the topic query", () => {
@@ -409,11 +447,11 @@ describe("GET /api/articles?topic=topic", () => {
       });
   });
 });
-  test("404: will respond with a 404 when the server cannot find the requested resource", () => {
-    return request(app)
-      .get("/api/articles?topic=mit")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Topic Not Found");
-      });
-  });
+test("404: will respond with a 404 when the server cannot find the requested resource", () => {
+  return request(app)
+    .get("/api/articles?topic=mit")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Topic Not Found");
+    });
+});
