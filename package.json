@@ -9,6 +9,7 @@
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest"
+    
   },
   "repository": {
     "type": "git",
