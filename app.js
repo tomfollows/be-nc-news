@@ -4,6 +4,7 @@ app.use(express.json());
 const { getTopics } = require("./controllers/topics.controllers");
 const { getApi } = require("./controllers/api.controllers");
 const { deleteCommentById } = require("./controllers/delete.controllers");
+const { getUsers } = require("./controllers/api.controllers");
 
 const {
   getArticleById,
@@ -12,6 +13,8 @@ const {
   postCommentByArticleId,
   updateArticleVotes,
 } = require("./controllers/articles.controllers");
+
+app.get("/api/users", getUsers);
 
 app.get("/api/topics", getTopics);
 
@@ -22,6 +25,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.get("/api/articles?topic=mitch", getTopics);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
@@ -40,7 +45,6 @@ app.use((err, req, res, next) => {
     next(err);
   }
 });
-
 
 app.use((err, req, res, next) => {
   if (err.code === "23502") {

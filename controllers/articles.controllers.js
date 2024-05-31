@@ -18,9 +18,14 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  selectAllArticles()
+  const topic = req.query.topic;
+  selectAllArticles(topic)
     .then((articles) => {
-      res.status(200).send({ articles });
+      if (articles.length === 0) {
+        return Promise.reject({ status: 404, msg: "Topic Not Found" });
+      } else {
+        res.status(200).send({ articles });
+      }
     })
     .catch((err) => {
       next(err);

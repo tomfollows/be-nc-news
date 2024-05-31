@@ -18,26 +18,32 @@ exports.SelectByArticleId = (article_id) => {
     });
 };
 
-exports.selectAllArticles = () => {
-  return db
-    .query(
-      `SELECT 
-        articles.author, 
-        articles.title, 
-        articles.topic, 
-        articles.article_id, 
-        articles.created_at, 
-        articles.votes, 
-        articles.article_img_url, 
-        COUNT(comments.comment_id) AS comment_count
-      FROM articles
-      LEFT JOIN comments ON articles.article_id = comments.article_id
-      GROUP BY articles.article_id
-      ORDER BY articles.created_at DESC`
-    )
-    .then((res) => {
-      return res.rows;
-    });
+exports.selectAllArticles = (topic) => {
+  let queryStr = `
+    SELECT 
+      articles.author, 
+      articles.title, 
+      articles.topic, 
+      articles.article_id, 
+      articles.created_at, 
+      articles.votes, 
+      articles.article_img_url, 
+      COUNT(comments.comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+  const queryParams = [];
+
+  if (topic !== undefined) {
+    queryStr += ` WHERE articles.topic = $1`;
+    queryParams.push(topic);
+  }
+
+  queryStr += `
+    GROUP BY articles.article_id
+    ORDER BY articles.created_at DESC`;
+
+  return db.query(queryStr, queryParams).then((res) => res.rows);
 };
 
 exports.selectArticleComments = (article_id) => {
@@ -118,4 +124,3 @@ exports.VotesModel = (article_id, inc_votes) => {
       return res.rows[0];
     });
 };
-

@@ -339,3 +339,60 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+describe("GET /api/users", () => {
+  test("200: GET /api/users should respond with an array of user objects, each of which should have the relevant properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).toHaveLength(4);
+        body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+  test("404: will respond with a 404 when the server cannot find the requested resource", () => {
+    return request(app)
+      .get("/api/user")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route Not Found");
+      });
+  });
+});
+// CORE: GET /api/articles (topic query)
+// Description
+// FEATURE REQUEST The endpoint should also accept the following query:
+
+// topic, which filters the articles by the topic value specified in the query. If the query is omitted, the endpoint should respond with all articles.
+// Consider what errors could occur with this endpoint, and make sure to test for them.
+
+// You should not have to amend any previous tests.
+
+// Remember to add a description of this endpoint to your /api endpoint
+
+describe("GET /api/articles?topic=topic", () => {
+  test("200: GET /api/articles?topic=topic should respond with an articles array of article objects filtered by the topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(12);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+});
+  test("404: will respond with a 404 when the server cannot find the requested resource", () => {
+    return request(app)
+      .get("/api/articles?topic=mit")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic Not Found");
+      });
+  });
