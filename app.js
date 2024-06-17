@@ -5,6 +5,7 @@ const { getTopics } = require("./controllers/topics.controllers");
 const { getApi } = require("./controllers/api.controllers");
 const { deleteCommentById } = require("./controllers/delete.controllers");
 const { getUsers } = require("./controllers/api.controllers");
+const cors = require("cors");
 
 const {
   getArticleById,
